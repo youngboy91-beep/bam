@@ -10,7 +10,14 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "dev:extension": "npm run dev --workspace apps/extension",
-    "dev:api": "npm run dev --workspace apps/api"
+    "dev:api": "npm run dev --workspace apps/api",
+    "dev:claim-web": "npm run dev --workspace apps/claim-web",
+    "dev:all": "concurrently -k -n api,ext,claim -c blue,magenta,cyan \"npm run dev:api\" \"npm run dev:extension\" \"npm run dev:claim-web\"",
+    "smoke": "node apps/api/test-e2e-session.mjs && node apps/api/test-e2e-claim.mjs",
+    "typecheck": "tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/extension/tsconfig.json --noEmit && tsc -p apps/claim-web/tsconfig.json --noEmit && tsc -p packages/shared/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
   },
   "engines": {
     "node": ">=20"
