@@ -1,37 +1,23 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
-import { copyFileSync, mkdirSync } from "node:fs";
 
-// Build three entry points (content, background, popup-less for now) into dist/.
-// Copy manifest.json next to them so `dist/` can be loaded as unpacked.
+// Vite builds ONLY the content script (React + JSX + Shadow DOM).
+// The background service worker is built separately via esbuild in scripts/build-background.mjs
+// because MV3 content scripts must be a single self-contained IIFE (no code-splitting),
+// which Vite cannot produce with multiple entry points in one invocation.
+
 export default defineConfig({
-  plugins: [
-    react(),
-    {
-      name: "copy-manifest",
-      closeBundle() {
-        mkdirSync(resolve(__dirname, "dist"), { recursive: true });
-        copyFileSync(
-          resolve(__dirname, "manifest.json"),
-          resolve(__dirname, "dist/manifest.json"),
-        );
-      },
-    },
-  ],
+  plugins: [react()],
   build: {
-    emptyOutDir: true,
+    emptyOutDir: false, // background/manifest are written by a separate step
+    outDir: "dist",
     rollupOptions: {
-      input: {
-        content: resolve(__dirname, "src/content/index.tsx"),
-        background: resolve(__dirname, "src/background/index.ts"),
-      },
+      input: resolve(__dirname, "src/content/index.tsx"),
       output: {
-        entryFileNames: "[name].js",
-        chunkFileNames: "chunks/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash][extname]",
+        entryFileNames: "content.js",
         format: "iife",
-        inlineDynamicImports: false,
+        inlineDynamicImports: true,
       },
     },
   },
