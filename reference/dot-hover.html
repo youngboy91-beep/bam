@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TruthLayer — inline dot + hover card reference</title>
+<style>
+  :root {
+    --bg: #000;
+    --panel: #16181c;
+    --panel-2: #0f1114;
+    --border: #2f3336;
+    --text: #e7e9ea;
+    --muted: #71767b;
+    --accent: #1d9bf0;
+    --green: #00ba7c;
+    --yellow: #ffad1f;
+    --red: #f4212e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 96px;
+  }
+  .page-title {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 620px;
+  }
+  .page-title b { color: var(--text); }
+  .page-title code { color: var(--accent); background: #111; padding: 1px 6px; border-radius: 4px; }
+  .feed {
+    width: 100%;
+    max-width: 600px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  /* tweet */
+  .tweet {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: white;
+  }
+  .avatar.blue   { background: linear-gradient(135deg, #1d9bf0, #7856ff); }
+  .avatar.purple { background: linear-gradient(135deg, #7856ff, #f91880); }
+  .avatar.orange { background: linear-gradient(135deg, #ffad1f, #f4212e); }
+  .avatar.teal   { background: linear-gradient(135deg, #00ba7c, #1d9bf0); }
+  .tweet-body { flex: 1; min-width: 0; }
+  .tweet-header {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 15px;
+  }
+  .name { font-weight: 700; }
+  .verified { color: var(--accent); font-size: 14px; }
+  .handle, .dot, .time { color: var(--muted); }
+  .tl-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; margin: 0 6px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+    position: relative;
+  }
+  .tl-dot:hover { transform: scale(1.35); }
+  .tl-dot-green  { background: var(--green);  box-shadow: 0 0 6px rgba(0,186,124,0.55); }
+  .tl-dot-yellow { background: var(--yellow); box-shadow: 0 0 6px rgba(255,173,31,0.55); }
+  .tl-dot-red    { background: var(--red);    box-shadow: 0 0 6px rgba(244,33,46,0.55); }
+  .tl-dot-gray   { background: var(--muted); }
+  .tweet-text { margin-top: 2px; font-size: 15px; line-height: 1.35; }
+  .ticker { color: var(--accent); font-weight: 500; }
+  .tweet-actions {
+    display: flex; justify-content: space-between;
+    max-width: 420px; margin-top: 12px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  /* floating hover card */
+  .sim-note {
+    text-align: center; color: var(--muted);
+    font-size: 11px; margin: 32px 0 12px;
+    letter-spacing: 0.3px;
+  }
+  .card-wrap {
+    width: 100%; max-width: 400px;
+    margin: 0 auto 24px;
+  }
+  .card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 13px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .logo { width: 16px; height: 16px; border-radius: 4px; background: linear-gradient(135deg, #1d9bf0, #7856ff); }
+  .tier {
+    color: var(--text); font-size: 11px;
+    padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;
+  }
+  .signal {
+    font-weight: 700; font-size: 12px; letter-spacing: 0.5px;
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .signal-caution { background: rgba(255,173,31,0.15); color: var(--yellow); }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+  }
+  .cell { background: var(--panel-2); padding: 10px 12px; }
+  .label {
+    color: var(--muted); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  .value { font-size: 14px; font-weight: 600; }
+  .value-neg { color: var(--red); }
+  .value-yellow { color: var(--yellow); }
+  .sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+  .body { padding: 10px 12px; border-top: 1px solid var(--border); color: var(--text); line-height: 1.4; }
+
+  .links-block {
+    padding: 10px 12px; border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .link-row { display: flex; flex-direction: column; gap: 6px; }
+  .link-title {
+    color: var(--muted); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .link-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .link {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: #16181c;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text); text-decoration: none;
+    font-size: 12px; line-height: 1;
+  }
+  .link:hover { border-color: #4a4d52; background: #1c1f23; }
+  .link-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 4px;
+    background: rgba(29,155,240,0.15); color: var(--accent);
+    font-size: 10px; font-weight: 700;
+  }
+
+  .foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 11px;
+  }
+  .foot a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <b>TruthLayer</b> — new UX reference. The feed stays clean; a single
+  <b>colored dot</b> appears next to each author's handle. The full
+  details (metrics + <code>external links</code>) pop up only when the
+  user <b>hovers</b> or <b>clicks</b> the dot.
+</div>
+
+<div class="feed">
+
+  <!-- clean -->
+  <div class="tweet">
+    <div class="avatar blue">V</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">Vitalik</span>
+        <span class="verified">&#10004;</span>
+        <span class="tl-dot tl-dot-green" title="TruthLayer: verified holder"></span>
+        <span class="handle">@vitalik_research</span>
+        <span class="dot">&middot;</span>
+        <span class="time">2h</span>
+      </div>
+      <div class="tweet-text">Interesting update from the <span class="ticker">$ETH</span> restaking ecosystem this week. Long-term thesis intact.</div>
+      <div class="tweet-actions"><span>412</span><span>1.2K</span><span>8.4K</span><span>230K</span></div>
+    </div>
+  </div>
+
+  <!-- caution -->
+  <div class="tweet">
+    <div class="avatar purple">A</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">AlphaCaller</span>
+        <span class="verified">&#10004;</span>
+        <span class="tl-dot tl-dot-yellow" title="TruthLayer: caution"></span>
+        <span class="handle">@alpha_caller_x</span>
+        <span class="dot">&middot;</span>
+        <span class="time">42m</span>
+      </div>
+      <div class="tweet-text">I'm loading <span class="ticker">$PEPU</span> heavy right now. This runs 10x this week, trust me.</div>
+      <div class="tweet-actions"><span>87</span><span>220</span><span>1.1K</span><span>34K</span></div>
+    </div>
+  </div>
+
+  <!-- risk -->
+  <div class="tweet">
+    <div class="avatar orange">M</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">MoonDegen</span>
+        <span class="tl-dot tl-dot-red" title="TruthLayer: high risk"></span>
+        <span class="handle">@moondegen_sol</span>
+        <span class="dot">&middot;</span>
+        <span class="time">7m</span>
+      </div>
+      <div class="tweet-text">LFG <span class="ticker">$SNIPR</span> just launched. 100x minimum this cycle.</div>
+      <div class="tweet-actions"><span>9</span><span>41</span><span>103</span><span>2.8K</span></div>
+    </div>
+  </div>
+
+  <!-- unverified -->
+  <div class="tweet">
+    <div class="avatar teal">R</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">RandomUser</span>
+        <span class="tl-dot tl-dot-gray" title="TruthLayer: unverified"></span>
+        <span class="handle">@random_cryptoguy</span>
+        <span class="dot">&middot;</span>
+        <span class="time">1h</span>
+      </div>
+      <div class="tweet-text">Bought more <span class="ticker">$SOL</span>. DCA as usual.</div>
+      <div class="tweet-actions"><span>2</span><span>8</span><span>31</span><span>540</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sim-note">&mdash; hover card (shown detached for reference) &mdash;</div>
+
+<div class="card-wrap">
+  <div class="card">
+    <div class="head">
+      <div class="brand"><span class="logo"></span> TruthLayer <span class="tier">tier B+ &middot; top quintile, trader cohort</span></div>
+      <div class="signal signal-caution">&#9679; CAUTION</div>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <div class="label">Holds token</div>
+        <div class="value value-yellow">Yes &middot; $12.4K</div>
+        <div class="sub">recent entry</div>
+      </div>
+      <div class="cell">
+        <div class="label">Shill history</div>
+        <div class="value value-yellow">Frequent caller</div>
+        <div class="sub">serial pattern detected</div>
+      </div>
+      <div class="cell">
+        <div class="label">Avg PnL after call</div>
+        <div class="value value-neg">Underperforms</div>
+        <div class="sub">most calls below market</div>
+      </div>
+    </div>
+    <div class="body">
+      Author entered the position shortly before promoting it, and
+      historical calls tend to underperform. Treat as a short-term signal.
+    </div>
+    <div class="links-block">
+      <div class="link-row">
+        <div class="link-title">Wallet on ethereum</div>
+        <div class="link-list">
+          <a class="link" href="#"><span class="link-icon">E</span>Etherscan</a>
+          <a class="link" href="#"><span class="link-icon">D</span>DeBank</a>
+          <a class="link" href="#"><span class="link-icon">A</span>Arkham</a>
+          <a class="link" href="#"><span class="link-icon">Z</span>Zapper</a>
+        </div>
+      </div>
+      <div class="link-row">
+        <div class="link-title">$PEPU</div>
+        <div class="link-list">
+          <a class="link" href="#"><span class="link-icon">&#8599;</span>DEXScreener</a>
+          <a class="link" href="#"><span class="link-icon">&#8599;</span>GeckoTerminal</a>
+        </div>
+      </div>
+      <div class="link-row">
+        <div class="link-title">Author</div>
+        <div class="link-list">
+          <a class="link" href="#"><span class="link-icon">@</span>X profile</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot">
+      <span>Sources: etherscan &middot; dex_trades &middot; tl_kol_graph</span>
+      <a href="#">Full report &rsaquo;</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
