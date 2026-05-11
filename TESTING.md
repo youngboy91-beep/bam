@@ -41,7 +41,6 @@ npm run dev:claim-web     # terminal 3
 
 ## 3. Three surfaces to test
 
-### 3.1 Extension overlay on X
 
 1. Open `chrome://extensions`.
 2. Toggle **Developer mode** (top right).
@@ -49,22 +48,6 @@ npm run dev:claim-web     # terminal 3
 4. Pin it in the toolbar so you can see the popup.
 5. Go to `https://x.com` and scroll the home feed.
 
-**What should happen**
-
-- Under every tweet, a TruthLayer overlay appears.
-- Tweets from `@VitalikButerin`, `@alpha_caller_x`, `@moondegen_sol` show
-  canonical CLEAN / CAUTION / RISK verdicts.
-- Every other tweet shows `UNVERIFIED` with "Claim to get a badge".
-- Click the extension icon: the popup shows `Anonymous` plan, `0/100`
-  usage, and a big "Claim my badge" button.
-
-**What to file as a bug**
-
-- Overlay not appearing under some tweet shape (quote-tweet, reply, ad
-  slot, grok thread, media-heavy tweet).
-- Overlay misaligned or breaking page layout.
-- Any numeric value rendered that looks "computed client-side" (there
-  shouldn't be any — if you spot one, tell me).
 
 ### 3.2 `/claim` self-onboarding flow
 
