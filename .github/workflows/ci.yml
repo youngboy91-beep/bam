@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build all workspaces
+        run: npm run build
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Start API in background
+        run: |
+          node apps/api/dist/server.js > /tmp/api.log 2>&1 &
+          echo $! > /tmp/api.pid
+          # wait for health
+          for i in $(seq 1 20); do
+            if curl -fs http://127.0.0.1:8787/health > /dev/null; then
+              echo "API up"
+              break
+            fi
+            sleep 0.5
+          done
+
+      - name: Smoke — session path
+        run: node apps/api/test-e2e-session.mjs
+
+      - name: Smoke — claim path
+        run: node apps/api/test-e2e-claim.mjs
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" || true; fi
+          echo "--- API log tail ---"
+          tail -n 50 /tmp/api.log || true
+
+      - name: Leak check — no raw signal fields in consumer response
+        run: |
+          node apps/api/dist/server.js > /tmp/api.log 2>&1 &
+          API_PID=$!
+          for i in $(seq 1 20); do
+            if curl -fs http://127.0.0.1:8787/health > /dev/null; then break; fi
+            sleep 0.5
+          done
+          curl -s "http://127.0.0.1:8787/v1/score?handle=alpha_caller_x&ticker=PEPU" \
+            | node -e '
+              let b = "";
+              process.stdin.on("data", c => b += c);
+              process.stdin.on("end", () => {
+                const d = JSON.parse(b);
+                const banned = ["confidence","identity_confidence","avg_pnl_7d",
+                  "median_pnl_7d","calls_30d","time_to_tweet_hours","amount_usd",
+                  "top10_pct","unique_tickers_30d","serial_caller","total_calls",
+                  "calls_that_worked","age_hours"];
+                const scan = (o, p="") => {
+                  let f = [];
+                  if (o && typeof o === "object" && !Array.isArray(o)) {
+                    for (const [k,v] of Object.entries(o)) {
+                      if (banned.includes(k)) f.push(p+"."+k);
+                      f = f.concat(scan(v, p+"."+k));
+                    }
+                  } else if (Array.isArray(o)) {
+                    o.forEach((v,i)=>{ f = f.concat(scan(v, p+"["+i+"]")); });
+                  }
+                  return f;
+                };
+                const leaks = scan(d);
+                if (leaks.length) {
+                  console.error("LEAK:", leaks);
+                  process.exit(1);
+                }
+                console.log("no leaks");
+              });
+            '
+          kill $API_PID || true
+
+      - name: Leak check — prod extension bundle
+        run: |
+          node apps/extension/scripts/build-background.mjs --env=prod
+          if grep -q "localhost" apps/extension/dist/background.js; then
+            echo "prod bundle contains localhost"
+            exit 1
+          fi
+          if grep -q "localhost" apps/extension/dist/manifest.json; then
+            echo "prod manifest contains localhost"
+            exit 1
+          fi
+          echo "prod bundle clean"

@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import { randomBytes } from "node:crypto";
 import { getMockScore } from "./mock-store.js";
 import type { ScoreRequest, ScoreResponse } from "@truthlayer/shared";
+import { SCORING_VERSION } from "@truthlayer/shared";
 import { registerSessionRoutes } from "./routes/session.js";
 import { registerClaimRoutes } from "./routes/claim.js";
 import { createInMemoryNonceStore } from "./auth/nonce.js";
@@ -49,8 +50,57 @@ app.get<{ Querystring: ScoreRequest }>("/v1/score", async (req, reply) => {
   if (!handle) {
     return reply.status(400).send({ error: "handle is required" });
   }
-  const score: ScoreResponse = getMockScore({ handle, ticker, tweet_id });
-  return score;
+
+  // 1. Try the fixture store first (canonical demo handles).
+  const fixtureScore = getMockScore({ handle, ticker, tweet_id });
+  if (fixtureScore.identity_tier !== "C") {
+    return fixtureScore;
+  }
+
+  // 2. Fall back to the live identity graph. If this handle has any
+  //    self-onboarded A-tier links, synthesize a "verified, no signals
+  //    yet" response. The signal pipeline will replace this as adapters
+  //    come online; the shape does not change.
+  const links = identityStore.listLinksForHandle(handle);
+  if (links.length === 0) {
+    return fixtureScore; // unknown -> C / insufficient (already rendered)
+  }
+
+  const topTier = links.some((l) => l.tier === "A") ? "A" : "C";
+  const insufficient = {
+    ui_flag: "insufficient" as const,
+    display: "insufficient data",
+  };
+  const response: ScoreResponse = {
+    handle,
+    identity_tier: topTier,
+    identity_rank_label: null,
+    wallets: links.map((l) => ({
+      chain: l.chain,
+      address: l.address,
+      tier: l.tier,
+    })),
+    overlay_signal: topTier === "A" ? "clean" : "unknown",
+    metrics: {
+      holds: insufficient,
+      shill_history: insufficient,
+      pnl: insufficient,
+    },
+    token_signals: insufficient,
+    explanation:
+      topTier === "A"
+        ? "Verified wallet linked. On-chain signals will appear once the data pipeline is live."
+        : "No verified wallet for this author.",
+    sources: ["tl_graph"],
+    computed_at: new Date().toISOString(),
+    insufficient_data_fields: [
+      "metrics.holds",
+      "metrics.shill_history",
+      "metrics.pnl",
+    ],
+    scoring_version: SCORING_VERSION,
+  };
+  return response;
 });
 
 registerSessionRoutes(app, { jwtSecret, sessionStore });
