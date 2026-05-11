@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TruthLayer — Claim your wallet</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #0f1114;
+      --panel-2: #16181c;
+      --border: #2f3336;
+      --text: #e7e9ea;
+      --muted: #71767b;
+      --accent: #1d9bf0;
+      --green: #00ba7c;
+      --yellow: #ffad1f;
+      --red: #f4212e;
+      --purple: #7856ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(120,86,255,0.18), transparent 60%), var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px;
+    }
+    .header {
+      width: 100%; max-width: 960px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 56px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .logo-mark {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+    }
+
+    .hero { max-width: 760px; text-align: center; margin-bottom: 40px; }
+    h1 {
+      font-size: 44px; line-height: 1.1; font-weight: 700;
+      margin: 0 0 16px; letter-spacing: -0.8px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero-sub { font-size: 16px; color: var(--muted); line-height: 1.5; }
+
+    .card {
+      width: 100%; max-width: 560px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .steps {
+      display: flex; padding: 18px 20px; gap: 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel-2);
+    }
+    .step { flex: 1; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid var(--border); background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .step.done .step-num { background: var(--green); border-color: var(--green); color: #00170d; }
+    .step.active .step-num { background: var(--accent); border-color: var(--accent); color: #001424; }
+    .step.done, .step.active { color: var(--text); }
+
+    .body { padding: 28px 28px 24px; }
+    .body h2 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+    .body p.desc { margin: 0 0 20px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    label.field {
+      display: block;
+      font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    }
+    input.text {
+      width: 100%;
+      padding: 10px 12px; margin-bottom: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 14px;
+    }
+    input.text:focus { outline: none; border-color: var(--accent); }
+
+    .btn {
+      width: 100%;
+      padding: 12px 16px; margin-top: 6px;
+      border: 1px solid var(--border); border-radius: 12px;
+      background: var(--panel-2); color: var(--text);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .btn:hover { border-color: #4a4d52; background: #1c1f23; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; justify-content: center; }
+    .btn.primary:hover { filter: brightness(1.1); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
+    .icon-eth { background: #627eea; color: #fff; }
+    .icon-sol { background: linear-gradient(135deg, #9945ff, #14f195); color: #fff; }
+    .btn .label { flex: 1; text-align: left; }
+    .btn .meta { color: var(--muted); font-size: 12px; font-weight: 400; }
+
+    .connected {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; margin-bottom: 10px;
+      background: rgba(0,186,124,0.08);
+      border: 1px solid rgba(0,186,124,0.3);
+      border-radius: 10px;
+    }
+    .check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--green); color: #001a10;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 13px;
+    }
+    .connected .info { flex: 1; min-width: 0; }
+    .connected .name { font-size: 13px; font-weight: 600; }
+    .connected .addr {
+      font-size: 12px; color: var(--muted);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .chain-tag {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 3px 8px; border-radius: 4px;
+      background: rgba(255,255,255,0.06); color: var(--muted);
+    }
+
+    .sig-preview {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px; line-height: 1.55; color: var(--muted);
+      margin: 10px 0 14px;
+      white-space: pre-wrap; word-break: break-all;
+    }
+
+    .privacy {
+      display: flex; gap: 10px;
+      margin-top: 14px; padding: 10px 12px;
+      background: rgba(113,118,123,0.08);
+      border-radius: 8px;
+      font-size: 12px; color: var(--muted); line-height: 1.5;
+    }
+    .privacy .p-icon {
+      flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--muted); color: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; margin-top: 1px;
+    }
+
+    .toast {
+      position: fixed; right: 20px; bottom: 20px;
+      padding: 12px 16px; border-radius: 10px;
+      background: var(--panel-2); border: 1px solid var(--border);
+      font-size: 13px; max-width: 360px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: none;
+    }
+    .toast.err { border-color: rgba(244,33,46,0.4); }
+    .toast.ok { border-color: rgba(0,186,124,0.4); }
+
+    .success-card {
+      margin-top: 32px;
+      width: 100%; max-width: 560px;
+      border: 1px solid rgba(0,186,124,0.3);
+      background: linear-gradient(180deg, rgba(0,186,124,0.06), rgba(0,186,124,0));
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+    .success-card.on { display: block; }
+    .success-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 6px;
+      background: rgba(0,186,124,0.15); color: var(--green);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .success-badge::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+    }
+    .success-card h3 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+    .success-card p { margin: 0 0 18px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><span class="logo-mark"></span>TruthLayer</div>
+</div>
+
+<div class="hero">
+  <h1>Prove you are <span>@you</span>.<br/>Get a verified badge.</h1>
+  <p class="hero-sub">Link your X account to your wallets. Anyone reading your tweets with TruthLayer installed will see a green badge next to your posts about tokens you actually hold.</p>
+</div>
+
+<div class="card">
+  <div class="steps">
+    <div id="step-1" class="step active"><span class="step-num">1</span><span>Connect X</span></div>
+    <div id="step-2" class="step"><span class="step-num">2</span><span>Add wallet</span></div>
+    <div id="step-3" class="step"><span class="step-num">3</span><span>Sign &amp; claim</span></div>
+  </div>
+
+  <div class="body">
+    <!-- Step 1: handle -->
+    <div id="panel-1">
+      <h2>Step 1 &mdash; Your X handle</h2>
+      <p class="desc">During private beta we take the handle from this form. Twitter OAuth plugs in the next iteration.</p>
+      <label class="field" for="handle-input">X handle</label>
+      <input id="handle-input" class="text" type="text" placeholder="your_handle" autocomplete="off" />
+      <button id="handle-continue" class="btn primary">Continue</button>
+    </div>
+
+    <!-- Step 2: connect wallet -->
+    <div id="panel-2" style="display:none">
+      <h2>Step 2 &mdash; Link your wallet</h2>
+      <p class="desc">Choose the chain for this claim. You can repeat the flow to add more wallets after.</p>
+      <div id="wallet-connected" style="display:none"></div>
+      <button id="connect-evm" class="btn">
+        <span class="icon icon-eth">&#9830;</span>
+        <span class="label">Connect <b>Ethereum</b> wallet</span>
+        <span class="meta">EVM</span>
+      </button>
+      <button id="connect-solana" class="btn">
+        <span class="icon icon-sol">&#9674;</span>
+        <span class="label">Connect <b>Solana</b> wallet</span>
+        <span class="meta">Phantom &middot; Backpack</span>
+      </button>
+      <button id="wallet-continue" class="btn primary" style="margin-top: 14px" disabled>Continue</button>
+    </div>
+
+    <!-- Step 3: sign & claim -->
+    <div id="panel-3" style="display:none">
+      <h2>Step 3 &mdash; Sign the claim message</h2>
+      <p class="desc">This is the exact text the server generated. Your wallet will sign it to prove you control this address.</p>
+      <div class="sig-preview" id="sig-preview">Requesting nonce&hellip;</div>
+      <button id="sign-submit" class="btn primary" disabled>Sign and claim A-tier badge</button>
+
+      <div class="privacy">
+        <span class="p-icon">i</span>
+        <span>We link your wallet to your <b>X handle</b>, not to your real-world identity. You can detach at any time; removal propagates across the overlay within a short window.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="success" class="success-card">
+  <span class="success-badge">A-tier verified</span>
+  <h3>You're verified.</h3>
+  <p>Next time someone with TruthLayer reads your tweets about tokens you hold, they'll see a green badge and your real on-chain position.</p>
+  <button class="btn primary" id="claim-another">Claim another wallet</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module" src="/src/main.ts"></script>
+
+</body>
+</html>

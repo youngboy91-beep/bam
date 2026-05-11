@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "TruthLayer",
+  "version": "0.0.1",
+  "description": "On-chain reality check overlay for X/Twitter. Verify KOL claims, detect shills, surface token risks.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://x.com/*", "https://twitter.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "TruthLayer",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
