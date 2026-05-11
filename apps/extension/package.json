@@ -1,0 +1,26 @@
+{
+  "name": "@truthlayer/extension",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:background": "node scripts/build-background.mjs",
+    "build:content": "vite build",
+    "build": "npm run build:background && npm run build:content",
+    "dev": "npm run build"
+  },
+  "dependencies": {
+    "@truthlayer/shared": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.271",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.10"
+  }
+}
