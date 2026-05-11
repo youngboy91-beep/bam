@@ -1,0 +1,321 @@
+{
+  "version": "0.1.0",
+  "description": "TruthLayer seed identity graph. Hand-curated starting set used to bootstrap the KOL<->wallet graph. Post-MVP the graph grows via (b) scraping public proofs and (d) self-onboarding / community submissions.",
+  "tiers": {
+    "A":  "On-chain proof: signed message from wallet + Twitter OAuth, OR ENS/SNS in bio matching tweets.",
+    "B":  "Public proof: KOL themselves posted tx links, screenshots with address visible, or verifiable portfolio.",
+    "B+": "Context-match: NLP similarity of posts + on-chain co-activity with A-tier patterns on same token/narrative.",
+    "C":  "Community-submitted, unverified."
+  },
+  "categories": [
+    "ethereum_core",
+    "solana_core",
+    "trader_alpha",
+    "defi_builder",
+    "nft_culture",
+    "research_analyst",
+    "whale_anon"
+  ],
+  "kols": [
+    {
+      "handle": "VitalikButerin",
+      "display_name": "Vitalik Buterin",
+      "category": "ethereum_core",
+      "tier": "A",
+      "wallets": [
+        {"chain": "ethereum", "address": "0xd8dA6Bf26964aF9D7eEd9e03E53415D37aA96045", "label": "vitalik.eth", "source": "ens"}
+      ]
+    },
+    {
+      "handle": "aeyakovenko",
+      "display_name": "Anatoly Yakovenko",
+      "category": "solana_core",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "toly.sol public claims on X"
+    },
+    {
+      "handle": "rajgokal",
+      "display_name": "Raj Gokal",
+      "category": "solana_core",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "0xMert_",
+      "display_name": "Mert Mumtaz",
+      "category": "solana_core",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "mert.sol ENS/SNS"
+    },
+    {
+      "handle": "CobieTweets",
+      "display_name": "Cobie",
+      "category": "trader_alpha",
+      "tier": "B",
+      "wallets": [],
+      "verification_plan": "cobie.eth ENS"
+    },
+    {
+      "handle": "CryptoHayes",
+      "display_name": "Arthur Hayes",
+      "category": "trader_alpha",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "blknoiz06",
+      "display_name": "Ansem",
+      "category": "trader_alpha",
+      "tier": "B",
+      "wallets": [],
+      "verification_plan": "public solana wallet claims"
+    },
+    {
+      "handle": "MustStopMurad",
+      "display_name": "Murad",
+      "category": "trader_alpha",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "Pentosh1",
+      "display_name": "Pentoshi",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "CryptoCred",
+      "display_name": "Cred",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "loomdart",
+      "display_name": "Loomdart",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "Hsaka",
+      "display_name": "Hsaka",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "CL207",
+      "display_name": "CL",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "inversebrah",
+      "display_name": "Smolting Inu",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "GCRClassic",
+      "display_name": "GCR",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "tetranode",
+      "display_name": "Tetranode",
+      "category": "whale_anon",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "hasufl",
+      "display_name": "Hasu",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "iamDCinvestor",
+      "display_name": "DCinvestor",
+      "category": "research_analyst",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "dcinvestor.eth"
+    },
+    {
+      "handle": "gakonst",
+      "display_name": "Georgios Konstantopoulos",
+      "category": "ethereum_core",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "danrobinson",
+      "display_name": "Dan Robinson",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "TimBeiko",
+      "display_name": "Tim Beiko",
+      "category": "ethereum_core",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "timbeiko.eth"
+    },
+    {
+      "handle": "drakefjustin",
+      "display_name": "Justin Drake",
+      "category": "ethereum_core",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "dannyryan",
+      "display_name": "Danny Ryan",
+      "category": "ethereum_core",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "StaniKulechov",
+      "display_name": "Stani Kulechov",
+      "category": "defi_builder",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "haydenzadams",
+      "display_name": "Hayden Adams",
+      "category": "defi_builder",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "hayden.eth"
+    },
+    {
+      "handle": "AndreCronjeTech",
+      "display_name": "Andre Cronje",
+      "category": "defi_builder",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "santiagoroel",
+      "display_name": "Santiago R Santos",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "DegenSpartan",
+      "display_name": "DegenSpartan",
+      "category": "whale_anon",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "KyleSamani",
+      "display_name": "Kyle Samani",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "ChrisBurniske",
+      "display_name": "Chris Burniske",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "punk6529",
+      "display_name": "punk6529",
+      "category": "nft_culture",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "6529.eth"
+    },
+    {
+      "handle": "gmoneyNFT",
+      "display_name": "gmoney",
+      "category": "nft_culture",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "gmoney.eth"
+    },
+    {
+      "handle": "dingalingts",
+      "display_name": "dingaling",
+      "category": "nft_culture",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "pranksy",
+      "display_name": "Pranksy",
+      "category": "nft_culture",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "pranksy.eth"
+    },
+    {
+      "handle": "cozomomedici",
+      "display_name": "Cozomo de' Medici",
+      "category": "nft_culture",
+      "tier": "A",
+      "wallets": [],
+      "verification_plan": "cozomo_de_medici.eth"
+    },
+    {
+      "handle": "farokh",
+      "display_name": "Farokh",
+      "category": "nft_culture",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "beaniemaxi",
+      "display_name": "Beanie",
+      "category": "nft_culture",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "HsakaTrades",
+      "display_name": "Hsaka (trades alt)",
+      "category": "trader_alpha",
+      "tier": "C",
+      "wallets": []
+    },
+    {
+      "handle": "0xngmi",
+      "display_name": "ngmi",
+      "category": "defi_builder",
+      "tier": "B",
+      "wallets": []
+    },
+    {
+      "handle": "tayvano_",
+      "display_name": "Tay",
+      "category": "research_analyst",
+      "tier": "B",
+      "wallets": []
+    }
+  ],
+  "growth_plan": {
+    "phase_1_seed": "~40 hand-curated entries above (this file). Used for overlay demo + pattern calibration.",
+    "phase_2_scrape": "Automated scraper queries each handle on X for tx links (etherscan.io/tx, solscan.io, ENS/SNS mentions) -> auto-upgrade tier C -> B.",
+    "phase_3_self_onboard": "Public web flow at truthlayer.app/claim: Sign-In-With-Ethereum/Solana + Twitter OAuth -> instant A-tier. Open to ANY user, not just influencers.",
+    "phase_4_context_match": "NLP embeddings over verified A-tier posts. For unverified handles, compare post embeddings + wallet on-chain co-activity to suggest B+ tier with confidence score.",
+    "phase_5_crowdsource": "User-submitted links go to tier C; upvotes + any on-chain proof promote them."
+  }
+}
