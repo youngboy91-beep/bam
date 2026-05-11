@@ -15,10 +15,12 @@
     "@truthlayer/shared": "*",
     "bs58": "^6.0.0",
     "ethereum-cryptography": "^2.2.1",
-    "fastify": "^4.28.1"
+    "fastify": "^4.28.1",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
+    "@types/pg": "^8.11.10",
     "tsx": "^4.19.2",
     "typescript": "^5.5.4"
   }
