@@ -1,89 +1,82 @@
-# TruthLayer Identity Graph
+# TruthLayer Identity Graph (Public)
 
-The identity graph is the core IP of TruthLayer: it links **social identities** (X/Twitter handles, later Farcaster, Lens) to **on-chain identities** (wallet addresses across supported chains).
+The identity graph links **social identities** (X handles today; Farcaster and Lens later) to **on-chain identities** (wallets across supported chains). It is the foundation the overlay and the B2B API both read from.
 
-Without a reliable graph, the overlay has nothing to say. With a reliable graph, every other feature (KOL reality check, shill history, PnL after calls) becomes possible.
+The graph is built open: anyone can contribute their own link, anyone can claim a verified badge, anyone can submit a candidate link for someone else. Quality comes from the tier system — not every contribution carries equal weight.
+
+This document describes the graph's structure and lifecycle. It does not describe the exact thresholds or heuristics used to infer, refresh, or defend it. Those live in internal specs.
 
 ## Trust tiers
 
-| Tier | Label in UI | How it's established | Confidence |
-|------|-------------|----------------------|------------|
-| **A** | verified | Wallet-signed message + Twitter OAuth session, OR ENS/SNS name matching handle claims | ~100% |
-| **B** | public proof | KOL has publicly posted a tx link, screenshot with full address, or linked portfolio tool showing the wallet | ~90% |
-| **B+** | likely (NN%) | Context-match: NLP similarity of posts + on-chain co-activity with A-tier patterns on the same token/narrative | 60-85% (shown as % in UI) |
-| **C** | unverified | Community-submitted, no on-chain or contextual proof yet | shown but de-emphasized |
+| Tier | Label in UI | How it is established |
+|------|-------------|-----------------------|
+| **A** | verified | The user themselves proves ownership of both the handle and the wallet in a single session. |
+| **B** | public proof | The handle has, in public, linked a specific wallet to itself, and that proof is still live. |
+| **B+** | likely | Inferred automatically from combined independent signals. Always shown with a relative rank so the reader can weigh it. |
+| **C** | unverified | Submitted but unproven. Shown de-emphasized; cannot be used as a basis for quantitative metrics. |
 
-The overlay **always** renders the tier so the user can decide how much weight to give the data. A KOL's rating from a B+ link is never presented as equivalent to an A-tier link.
+The overlay always renders the tier. A B+ conclusion is never silently presented as equivalent to A. A C-tier candidate is never quoted as if it were verified.
 
-## Growth strategy (ordered)
+## Growth order
 
-### Phase 1 — Seed (this repo)
-~40 hand-curated entries in `data/kol-seed.json`. Covers the most-read handles across Ethereum core, Solana core, trader alpha, DeFi, NFT, research. Used to:
-- Demo the overlay with real data on day 1.
-- Calibrate the context-match model (phase 4) against known-good examples.
+Strictly in this order. We do not skip phases.
 
-### Phase 2 — Public-proof scraper
-Background job queries each handle's recent X history and extracts:
-- Links to `etherscan.io/tx/0x...`, `solscan.io/tx/...`, `arbiscan.io/...`, etc.
-- ENS/SNS names (`.eth`, `.sol`) in bio and pinned tweets.
-- Screenshots containing full wallet addresses (OCR, later phase).
+1. **Seed.** A small, hand-curated set of well-known handles, used to bootstrap the system and to calibrate automated inference against known-good examples.
+2. **Public-proof harvesting.** Background indexing of each handle's public statements to find explicit links they have already made. Promotes unverified candidates to B-tier.
+3. **Self-onboarding at mass scale.** The product is not limited to influencers. Any user can claim their own handle-to-wallet links in a single flow, receive an A-tier verified badge, and be reflected in every overlay rendering of their posts. This is the primary growth lever.
+4. **Context-match inference.** For handles that never self-onboard and never posted a public link, the system can infer likely wallets by combining several independent signals against the verified population. The result is displayed as B+ with a relative rank, never as A.
+5. **Community contributions.** Any user can submit a candidate link. Submissions start as C-tier and move up only through independent corroboration.
 
-Each hit promotes a handle from C to B automatically. Human review required to promote B -> A.
+## Mass-scale onboarding
 
-### Phase 3 — Self-onboarding (MASS SCALE)
-The product must work for **every crypto user**, not just top influencers. Public page at `truthlayer.app/claim`:
+Every crypto user, not only influencers, can prove they are who they say they are.
 
-1. "Sign in with X" (OAuth)
-2. "Connect wallet" (EIP-4361 Sign-In-With-Ethereum or SIWS for Solana)
-3. Sign a canonical message: `I am @{handle} and I control {address}. Timestamp: {ts}. Nonce: {n}.`
-4. We verify the signature against the address, and the OAuth session against the handle.
-5. Link stored as A-tier, visible in the overlay for anyone who reads this user's tweets.
+1. Sign in with their social account.
+2. Connect one or more wallets across supported chains.
+3. Sign a canonical message with each wallet that binds it to the session.
+4. The link is recorded at A-tier and reflected in the overlay wherever their posts are read.
 
-Zero friction, zero cost. Open to anyone who wants to prove they are who they say they are. A user can attach multiple wallets to one handle (trading wallet, main wallet, NFT wallet) with labels.
+A user can attach multiple wallets to one handle with private labels (for example, trading / main / NFT). A user can detach any link at any time; detachment propagates into overlay responses within a short bounded window.
 
-### Phase 4 — Context-match (B+ tier)
-For handles that never self-onboard and never posted a tx link, we can still infer likely wallets:
+The same flow serves two purposes: the user gets an account with synced preferences; the graph gets a verified node. This is the single biggest driver of graph quality and is therefore the most important UX path in the product.
 
-1. For every A-tier KOL, collect their post embeddings (narrative, tokens mentioned, timing) and their wallet on-chain activity (which tokens they bought/sold and when).
-2. For an unverified handle H claiming wallet W, compute:
-   - Semantic similarity of H's posts to known A-tier patterns on the same tokens.
-   - Temporal correlation between H's posts about token T and W's buy/sell of T.
-3. If both signals pass threshold, suggest W as B+ link with a confidence score.
-4. Never auto-promote to A. Only the user themselves (via phase 3) or a public proof (phase 2) can reach A.
-
-This is the key differentiator: competitors either have curated closed lists (Nansen, Arkham) or nothing. We have a statistically-inferred open graph.
-
-### Phase 5 — Community submissions
-Any extension user can submit a link `handle -> address` with a reason. Stored as C tier. Upvotes + any on-chain proof advance it toward B.
-
-## Data model (sketch)
+## Data model
 
 ```
 identities
   id              uuid
-  handle          text        -- x.com handle, lowercase
-  platform        text        -- 'x' | 'farcaster' | 'lens'
+  handle          text                              -- lowercased platform handle
+  platform        text                              -- x | farcaster | lens
   display_name    text
 
 wallets
   id              uuid
-  chain           text        -- 'ethereum' | 'solana' | 'base' | 'arbitrum' | 'bnb' | 'ton'
-  address         text
+  chain           text                              -- supported chains
+  address         text                              -- lowercase for EVM, native form for others
   first_seen_at   timestamptz
 
 links
-  identity_id     uuid
-  wallet_id       uuid
-  tier            text        -- 'A' | 'B' | 'B+' | 'C'
-  confidence      numeric     -- 0..1, null for A/B
-  source          text        -- 'self_onboard' | 'ens' | 'public_tx' | 'context_match' | 'community'
-  proof_url       text        -- tx hash, tweet URL, signature, etc.
+  identity_id     uuid references identities(id)
+  wallet_id       uuid references wallets(id)
+  tier            text                              -- 'A' | 'B' | 'B+' | 'C'
+  confidence      numeric                           -- stored for B+; not exposed publicly
+  source          text                              -- 'self_onboard' | 'public_proof' | 'context_match' | 'community' | 'name_service'
+  proof_ref       text                              -- internal reference to the proof record
+  status          text                              -- 'active' | 'pending' | 'decayed' | 'detached'
   created_at      timestamptz
+  last_verified_at timestamptz
   (identity_id, wallet_id) unique
 ```
 
-## Non-goals (MVP)
+The public API never exposes the raw `confidence` field or the internal proof references. It exposes the tier and a relative rank label.
 
-- **Doxxing.** We only link handles to addresses the user has themselves made public, or that are inferable from public context. We do not attempt to de-anonymize users who haven't revealed anything.
-- **Legal identity.** We do not link wallets to real-world names. Only to handles.
-- **Cross-platform for v1.** Phase 3 starts with X only; Farcaster and Lens come later.
+## Non-goals
+
+- **Doxxing.** The graph links handles to wallets, not handles to real-world names. We never attempt to de-anonymize users who have not revealed themselves.
+- **Legal identity verification.** We are not a KYC provider.
+- **Permanence.** Links are not immutable. They are refreshed, decayed, and detachable on user request. An address that was A-tier yesterday because of a user's claim stops being A-tier the moment the user detaches it.
+- **Cross-platform in v1.** X first. Farcaster and Lens integrations come after the X flow is stable.
+
+## What is not in this document
+
+Deliberately absent: the concrete thresholds for tier transitions, the specific signals used to infer B+, the time windows for re-verification, the exact rules that govern detachment propagation, and all anti-abuse heuristics. Those are in internal specs and evolve faster than this file.
