@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TruthLayer — X/Twitter overlay reference</title>
+<style>
+  :root {
+    --bg: #000;
+    --panel: #16181c;
+    --border: #2f3336;
+    --text: #e7e9ea;
+    --muted: #71767b;
+    --accent: #1d9bf0;
+    --green: #00ba7c;
+    --yellow: #ffad1f;
+    --red: #f4212e;
+    --overlay-bg: #0f1114;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .page-title {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 24px;
+    letter-spacing: 0.3px;
+  }
+  .page-title b { color: var(--text); }
+  .feed {
+    width: 100%;
+    max-width: 600px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  /* --- Tweet --- */
+  .tweet {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #1d9bf0, #7856ff);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: white;
+  }
+  .avatar.purple { background: linear-gradient(135deg, #7856ff, #f91880); }
+  .avatar.orange { background: linear-gradient(135deg, #ffad1f, #f4212e); }
+  .tweet-body { flex: 1; min-width: 0; }
+  .tweet-header {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 15px;
+  }
+  .name { font-weight: 700; }
+  .verified {
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .handle, .dot, .time { color: var(--muted); }
+  .dot { margin: 0 2px; }
+  .tweet-text {
+    margin-top: 2px;
+    font-size: 15px;
+    line-height: 1.35;
+    white-space: pre-wrap;
+  }
+  .ticker {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .tweet-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 420px;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .tweet-actions span { display: flex; align-items: center; gap: 6px; }
+
+  /* --- TruthLayer overlay --- */
+  .tl {
+    margin-top: 10px;
+    background: var(--overlay-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .tl-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tl-brand {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .tl-logo {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #1d9bf0, #7856ff);
+  }
+  .tl-signal {
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .tl-signal.green { background: rgba(0,186,124,0.15); color: var(--green); }
+  .tl-signal.yellow { background: rgba(255,173,31,0.15); color: var(--yellow); }
+  .tl-signal.red { background: rgba(244,33,46,0.15); color: var(--red); }
+
+  .tl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .tl-cell {
+    background: var(--overlay-bg);
+    padding: 10px 12px;
+  }
+  .tl-label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  .tl-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .tl-value.pos { color: var(--green); }
+  .tl-value.neg { color: var(--red); }
+  .tl-sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+  .tl-body {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tl-icon {
+    width: 18px; height: 18px; border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    margin-top: 1px;
+  }
+  .tl-icon.green { background: rgba(0,186,124,0.2); color: var(--green); }
+  .tl-icon.yellow { background: rgba(255,173,31,0.2); color: var(--yellow); }
+  .tl-icon.red { background: rgba(244,33,46,0.2); color: var(--red); }
+  .tl-text { line-height: 1.4; color: var(--text); }
+  .tl-text em { color: var(--muted); font-style: normal; }
+
+  .tl-foot {
+    display: flex; justify-content: space-between;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .tl-foot a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div>
+<div class="page-title"><b>TruthLayer</b> — reference overlay on X/Twitter · 3 scenarios</div>
+
+<div class="feed">
+
+  <!-- ========== TWEET 1: GREEN (clean) ========== -->
+  <div class="tweet">
+    <div class="avatar">V</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">Vitalik</span>
+        <span class="verified">&#10004;</span>
+        <span class="handle">@vitalik_research</span>
+        <span class="dot">·</span>
+        <span class="time">2h</span>
+      </div>
+      <div class="tweet-text">Interesting update from the <span class="ticker">$ETH</span> restaking ecosystem this week. Long-term thesis intact.</div>
+      <div class="tweet-actions">
+        <span>&#128172; 412</span><span>&#8646; 1.2K</span><span>&#9825; 8.4K</span><span>&#128202; 230K</span>
+      </div>
+
+      <div class="tl">
+        <div class="tl-head">
+          <div class="tl-brand"><span class="tl-logo"></span> TruthLayer</div>
+          <div class="tl-signal green">&#9679; CLEAN</div>
+        </div>
+        <div class="tl-grid">
+          <div class="tl-cell">
+            <div class="tl-label">Holds $ETH</div>
+            <div class="tl-value pos">Yes · 4 yrs</div>
+            <div class="tl-sub">Wallet: 0xd8dA…6045</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Shill history</div>
+            <div class="tl-value">Not a shiller</div>
+            <div class="tl-sub">0 paid promos detected</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Avg mention PnL</div>
+            <div class="tl-value pos">+ N/A</div>
+            <div class="tl-sub">Organic mentions only</div>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-icon green">&#10003;</div>
+          <div class="tl-text">
+            Long-term holder, no history of token shilling, wallet matches public identity via on-chain ENS.
+            <em>Take the opinion at face value.</em>
+          </div>
+        </div>
+        <div class="tl-foot">
+          <span>Sources: Etherscan · ENS · TL graph</span>
+          <a href="#">Details &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TWEET 2: YELLOW (suspicious) ========== -->
+  <div class="tweet">
+    <div class="avatar purple">A</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">AlphaCaller</span>
+        <span class="verified">&#10004;</span>
+        <span class="handle">@alpha_caller_x</span>
+        <span class="dot">·</span>
+        <span class="time">42m</span>
+      </div>
+      <div class="tweet-text">I'm loading <span class="ticker">$PEPU</span> heavy right now. This runs 10x this week, trust me. Not financial advice.</div>
+      <div class="tweet-actions">
+        <span>&#128172; 87</span><span>&#8646; 220</span><span>&#9825; 1.1K</span><span>&#128202; 34K</span>
+      </div>
+
+      <div class="tl">
+        <div class="tl-head">
+          <div class="tl-brand"><span class="tl-logo"></span> TruthLayer</div>
+          <div class="tl-signal yellow">&#9679; CAUTION</div>
+        </div>
+        <div class="tl-grid">
+          <div class="tl-cell">
+            <div class="tl-label">Holds $PEPU</div>
+            <div class="tl-value pos">Yes · $12.4K</div>
+            <div class="tl-sub">Entered 6h before tweet</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Shill history</div>
+            <div class="tl-value">14 calls / 30d</div>
+            <div class="tl-sub">Serial caller</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Avg 7d PnL after call</div>
+            <div class="tl-value neg">−38%</div>
+            <div class="tl-sub">Calls that worked: 3/14</div>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-icon yellow">!</div>
+          <div class="tl-text">
+            Author entered the position hours before promoting it, and historical calls underperform the market.
+            <em>Looks like a typical short-term pump setup — size accordingly.</em>
+          </div>
+        </div>
+        <div class="tl-foot">
+          <span>Sources: Etherscan · DEX trades · TL KOL graph</span>
+          <a href="#">Details &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TWEET 3: RED (scam pattern) ========== -->
+  <div class="tweet">
+    <div class="avatar orange">M</div>
+    <div class="tweet-body">
+      <div class="tweet-header">
+        <span class="name">MoonDegen</span>
+        <span class="handle">@moondegen_sol</span>
+        <span class="dot">·</span>
+        <span class="time">7m</span>
+      </div>
+      <div class="tweet-text">LFG <span class="ticker">$SNIPR</span> just launched. Dev is based. CA below. 100x minimum this cycle.</div>
+      <div class="tweet-actions">
+        <span>&#128172; 9</span><span>&#8646; 41</span><span>&#9825; 103</span><span>&#128202; 2.8K</span>
+      </div>
+
+      <div class="tl">
+        <div class="tl-head">
+          <div class="tl-brand"><span class="tl-logo"></span> TruthLayer</div>
+          <div class="tl-signal red">&#9679; HIGH RISK</div>
+        </div>
+        <div class="tl-grid">
+          <div class="tl-cell">
+            <div class="tl-label">Token age</div>
+            <div class="tl-value neg">22 min</div>
+            <div class="tl-sub">Launched on Solana</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Top 10 holders</div>
+            <div class="tl-value neg">74%</div>
+            <div class="tl-sub">Bundle pattern detected</div>
+          </div>
+          <div class="tl-cell">
+            <div class="tl-label">Author wallet</div>
+            <div class="tl-value neg">Linked to 3 rugs</div>
+            <div class="tl-sub">Last rug: 9d ago</div>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-icon red">&#10005;</div>
+          <div class="tl-text">
+            The promoter's wallet is connected to three previous rug-pulls in the last 30 days, and the token
+            was launched as a sniper bundle with concentrated supply.
+            <em>Do not interact — expected outcome: total loss.</em>
+          </div>
+        </div>
+        <div class="tl-foot">
+          <span>Sources: Helius · RugCheck · TL KOL graph</span>
+          <a href="#">Details &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>
