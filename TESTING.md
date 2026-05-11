@@ -41,7 +41,6 @@ npm run dev:claim-web     # terminal 3
 
 ## 3. Three surfaces to test
 
-### 3.1 Extension on X — inline dot + hover card
 
 1. Open `chrome://extensions`.
 2. Toggle **Developer mode** (top right).
@@ -49,41 +48,6 @@ npm run dev:claim-web     # terminal 3
 4. Pin it in the toolbar so you can see the popup.
 5. Go to `https://x.com` and scroll the home feed.
 
-**What should happen (new UX)**
-
-- Next to every tweet author's `@handle` there is a **small colored dot**.
-  No more full overlay under the tweet — the feed stays visually quiet.
-- Dot colors map to tier signal:
-  - **green** — verified (A-tier) with no caution flags
-  - **yellow** — caution
-  - **red** — high risk
-  - **gray** — unverified / unknown
-- **Hover** the dot (or focus it via keyboard, or click) -> a floating
-  card appears near the dot with:
-  - tier label
-  - three metric cells
-  - a one-line human explanation
-  - a block of **external links** grouped by "Wallet on chain X",
-    "$TICKER", and "Author" -> Etherscan, DeBank, Arkham, Zapper,
-    Solscan, Birdeye, RugCheck, DEXScreener, GeckoTerminal, X profile
-  - a "Full report >" link (future profile page)
-- Move the pointer into the card without closing it — the card stays.
-- Move the pointer away from both dot and card — the card fades out
-  after a short delay.
-- Click any external link — opens in a new tab.
-
-**What to file as a bug**
-
-- Dot not appearing next to the handle on some tweet shape (quote
-  tweet, reply card, thread lead, Grok "read more" layout).
-- Dot misaligned, overlapping verified checkmark, jumping when the
-  feed re-renders.
-- Hover card clipped by viewport edge or covered by X's own dialogs.
-- Hover card stays open after the pointer has left — or closes while
-  pointer is inside the card.
-- Any numeric value rendered that looks "computed client-side" (there
-  shouldn't be any — if you spot one, tell me).
-- Any external link that goes to the wrong page / wrong chain scanner.
 
 ### 3.2 `/claim` self-onboarding flow
 
