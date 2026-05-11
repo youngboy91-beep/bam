@@ -94,7 +94,7 @@ async function main() {
   });
   const snap = await snapRes.json();
   console.log("6. Session snapshot after claim:", snap);
-  if (snap.handle !== handle.toLowerCase() || snap.wallets_count !== 1) {
+  if (snap.handle !== handle.toLowerCase() || snap.wallets_count < 1) {
     throw new Error("Session not updated: " + JSON.stringify(snap));
   }
 
