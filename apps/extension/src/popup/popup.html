@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>TruthLayer</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #0f1114;
+      --panel-2: #16181c;
+      --border: #2f3336;
+      --text: #e7e9ea;
+      --muted: #71767b;
+      --accent: #1d9bf0;
+      --green: #00ba7c;
+      --yellow: #ffad1f;
+      --purple: #7856ff;
+      --gold: #ffad1f;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+    }
+    .head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    .brand-mark {
+      width: 18px; height: 18px; border-radius: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+    }
+    .plan {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 3px 8px; border-radius: 4px; text-transform: uppercase;
+    }
+    .plan-anon { background: rgba(113,118,123,0.2); color: var(--muted); }
+    .plan-free { background: rgba(29,155,240,0.15); color: var(--accent); }
+    .plan-pro  { background: linear-gradient(135deg, rgba(255,173,31,0.2), rgba(120,86,255,0.2)); color: var(--gold); border: 1px solid rgba(255,173,31,0.3); }
+
+    .sec { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .sec:last-child { border-bottom: none; }
+    .sec-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--muted); margin: 0 0 10px;
+    }
+
+    .usage-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .usage-row .label { color: var(--muted); }
+    .usage-row .count { color: var(--text); font-weight: 600; }
+    .bar { height: 5px; background: var(--panel-2); border-radius: 99px; margin-top: 8px; overflow: hidden; }
+    .bar-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      transition: width 0.3s;
+    }
+
+    .id-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; background: var(--panel-2); border-radius: 10px;
+    }
+    .id-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .id-info { flex: 1; min-width: 0; }
+    .id-handle { font-weight: 600; }
+    .id-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+    .cta {
+      display: block; width: 100%;
+      padding: 10px 14px; margin-top: 10px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 13px; font-weight: 600;
+      text-align: center; text-decoration: none;
+      cursor: pointer;
+    }
+    .cta:hover { filter: brightness(1.1); }
+    .cta-ghost { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+    .cta-pair { display: flex; gap: 8px; margin-top: 10px; }
+    .cta-pair .cta { margin-top: 0; flex: 1; }
+
+    .community {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px; background: var(--panel-2); border-radius: 10px;
+      margin-top: 10px;
+    }
+    .community .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #1d9bf0, #00ba7c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .community .info { flex: 1; min-width: 0; }
+    .community .name { font-weight: 600; font-size: 13px; }
+    .community .tag { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .community-link {
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 6px 10px; font-size: 12px; font-weight: 600;
+      text-decoration: none;
+    }
+    .community-link:hover { border-color: var(--accent); }
+
+    .foot {
+      display: flex; justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 11px;
+    }
+    .foot a { color: var(--muted); text-decoration: none; }
+    .foot a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="brand"><span class="brand-mark"></span>TruthLayer</div>
+    <div id="plan-badge" class="plan plan-anon">Anonymous</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Today's usage</div>
+    <div class="usage-row">
+      <span class="label">Lookups</span>
+      <span class="count" id="usage-count">&ndash;</span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="usage-bar" style="width: 0%"></div></div>
+  </div>
+
+  <div class="sec" id="identity-section">
+    <div class="sec-title">Your identity</div>
+    <div class="id-row">
+      <div class="id-avatar" id="id-avatar">?</div>
+      <div class="id-info">
+        <div class="id-handle" id="id-handle">Not connected</div>
+        <div class="id-meta" id="id-meta">Claim wallets to get a verified badge</div>
+      </div>
+    </div>
+    <div class="cta-pair" id="auth-ctas">
+      <a href="#" class="cta" id="claim-cta">Claim my badge</a>
+      <a href="#" class="cta cta-ghost" id="signin-cta">Sign in</a>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Community</div>
+    <div class="community">
+      <div class="avatar">TL</div>
+      <div class="info">
+        <div class="name">TruthLayer founder channel</div>
+        <div class="tag">Updates, roadmap, early access</div>
+      </div>
+      <a href="#" class="community-link" id="community-link" target="_blank" rel="noopener noreferrer">Join</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span id="build-tag">v0.0.1</span>
+    <span><a href="#" id="report-issue">Report issue</a> &middot; <a href="#" id="settings-link">Settings</a></span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
