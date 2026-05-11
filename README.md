@@ -155,23 +155,43 @@ Then:
 
 ---
 
-## Deploy (Free, 15 minutes)
+## Deploy (Free, 15 minutes, one-click)
 
-See **[DEPLOY.md](./DEPLOY.md)** for full instructions. TL;DR:
+<p>
+  <a href="https://railway.app/new/template?repo=https://github.com/youngboy91-beep/bam" target="_blank">
+    <img src="https://railway.app/button.svg" alt="Deploy on Railway" />
+  </a>
+  &nbsp;
+  <a href="https://vercel.com/new/clone?repository-url=https://github.com/youngboy91-beep/bam&root-directory=apps/claim-web&env=TL_API_BASE&envDescription=Your%20Railway%20API%20URL" target="_blank">
+    <img src="https://vercel.com/button" alt="Deploy to Vercel" />
+  </a>
+  &nbsp;
+  <a href="https://supabase.com/dashboard/new" target="_blank">
+    <img src="https://img.shields.io/badge/Supabase-Create%20Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Create Supabase DB" />
+  </a>
+</p>
 
-```bash
-# 1. Create Supabase project → get DATABASE_URL
-# 2. Deploy to Railway:
-#    - Dockerfile: apps/api/Dockerfile
-#    - Env: DATABASE_URL, TL_JWT_SECRET, TL_CORS_ORIGINS
-# 3. Deploy claim-web to Vercel:
-#    - Root: apps/claim-web
-#    - Env: TL_API_BASE=https://your-railway-url
-# 4. Build extension for Chrome Web Store:
-TL_API_BASE=https://your-api-url node apps/extension/scripts/build-background.mjs --env=prod
-```
+**The 3-button path:**
+
+1. Click **Supabase** → create project → copy `DATABASE_URL` from Settings → Database
+2. Click **Railway** → deploy this repo → set env vars (`DATABASE_URL`, `TL_JWT_SECRET`, `TL_CORS_ORIGINS`)
+3. Click **Vercel** → deploy `apps/claim-web` → set `TL_API_BASE` to your Railway URL
+
+That's it. See [DEPLOY.md](./DEPLOY.md) for the detailed walkthrough, env-variable reference, and troubleshooting.
 
 **Monthly cost: $0** on free tiers (handles 1000+ MAU).
+
+### Alternative: pull pre-built Docker image
+
+Every push to `main` publishes an image to GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/youngboy91-beep/bam/api:latest
+docker run -p 8787:8787 \
+  -e DATABASE_URL=postgres://... \
+  -e TL_JWT_SECRET=$(openssl rand -hex 32) \
+  ghcr.io/youngboy91-beep/bam/api:latest
+```
 
 ---
 
