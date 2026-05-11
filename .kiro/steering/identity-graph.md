@@ -2,44 +2,54 @@
 inclusion: always
 ---
 
-# TruthLayer — Identity Graph Rules
+# TruthLayer — Identity Graph Rules (Internal-Safe Summary)
 
-When working on anything related to linking social handles to on-chain addresses, follow these invariants.
+Concrete thresholds live in `.kiro/internal/identity-graph.md` (not in the
+public repository). Code must read values from that spec, not hard-code them.
 
 ## Trust tiers
 
-Always present one of four tiers in any UI or API response:
+Always surface one of four tiers: A, B, B+, C. A is the strongest. The
+rendering rules are:
 
-- **A (verified)** — wallet-signed message + Twitter OAuth session match, OR ENS/SNS equivalent.
-- **B (public proof)** — KOL themselves posted a tx link / address screenshot / portfolio link.
-- **B+ (likely, N%)** — context-match from NLP + on-chain co-activity; always display the confidence percentage.
-- **C (unverified)** — community-submitted, no proof yet; always de-emphasized in UI.
-
-Never present a lower tier as if it were a higher tier. Context-match (B+) is never silently promoted to A.
+- **A, B, B+** are shown in their respective styles; B+ additionally carries
+  a cohort-relative rank label.
+- **C** is always de-emphasized and is never used as a basis for metrics.
+- Never silently upgrade a lower tier to a higher one in the response.
 
 ## Growth order (strict)
 
-Features should be built in this order; do not skip ahead without explicit approval:
+Do not reorder without explicit approval.
 
-1. Seed curated list (`data/kol-seed.json`).
-2. Public-proof scraper (tx links + ENS/SNS in bios).
-3. **Self-onboarding for ANY user** (SIWE / SIWS + X OAuth). This is the mass-scale hook — the product must not be limited to influencers.
-4. Context-match model for B+ inference.
-5. Community submissions with upvotes.
+1. Seed — hand-curated list.
+2. Public-proof indexing.
+3. Self-onboarding (the mass-scale hook). The product must never be limited
+   to curated influencers.
+4. Context-match inference for B+.
+5. Community submissions.
 
 ## Data model invariants
 
-- `(identity_id, wallet_id)` is unique in the `links` table.
-- `confidence` is required for B+ links (0..1), null for A and B.
-- Every link must record a `source` and a `proof_url` (or proof blob).
-- Addresses are always stored lowercase for EVM chains, base58 as-is for Solana/TON.
+- `(identity_id, wallet_id)` is unique in `links`.
+- `confidence` is stored for B+, null for A and B.
+- Every link records a `source`. Proof material is stored in a separate
+  store and referenced by ID, not inlined.
+- EVM addresses stored lowercase; Solana and TON in native form.
 
 ## Privacy
 
 - Never link a wallet to a real-world identity. Only to a platform handle.
-- Do not attempt to de-anonymize anons who have not self-revealed.
-- Self-onboarding is fully opt-in. A user can detach a link at any time; detachment removes it from future overlay responses within 1 hour.
+- Detachment propagates into the overlay within the bounded window specified
+  internally.
+- Self-onboarding is opt-in; bulk imports of third parties are not permitted
+  into any tier above C.
 
-## Chains in scope (ordered by priority)
+## Chains in scope
 
-Ethereum, Solana, Base, Arbitrum, BNB Chain, TON. Each new chain requires its own address-format validator and RPC provider in config.
+Ethereum, Solana, Base, Arbitrum, BNB Chain, TON. New chains require a
+dedicated address-format validator and RPC provider configuration.
+
+## Public-doc rule
+
+- `docs/identity-graph.md` must not specify thresholds, windows, or the
+  content of signal calculations. Any PR that leaks specifics is rejected.
