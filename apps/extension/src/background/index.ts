@@ -14,9 +14,21 @@
 import type { ScoreRequest, ScoreResponse } from "@truthlayer/shared";
 import { SCORING_VERSION } from "@truthlayer/shared";
 import { API_BASE, CACHE_TTL_MS } from "./config";
+import { ensureAnonymousSession } from "./session";
 
 type CacheEntry = { at: number; data: ScoreResponse };
 const cache = new Map<string, CacheEntry>();
+
+// Kick off session bootstrap on install and on every browser start. The
+// function is idempotent; it no-ops if a valid session is already stored.
+chrome.runtime.onInstalled.addListener(() => {
+  void ensureAnonymousSession();
+});
+chrome.runtime.onStartup.addListener(() => {
+  void ensureAnonymousSession();
+});
+// Also try on load of this worker (covers dev reload of an unpacked ext).
+void ensureAnonymousSession();
 
 /** The session credential obtained on install. Stored by the session module. */
 async function getSessionToken(): Promise<string | null> {

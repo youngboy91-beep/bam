@@ -79,3 +79,109 @@ export interface ScoreRequest {
   ticker?: string;
   tweet_id?: string;
 }
+
+// --------------------------------------------------------------------------
+// Session
+// --------------------------------------------------------------------------
+
+export type Plan =
+  | "anonymous"
+  | "free"
+  | "pro"
+  | "partner_startup"
+  | "partner_growth"
+  | "partner_enterprise";
+
+export interface AnonymousSessionResponse {
+  /** Opaque JWT, carried in Authorization: Bearer. */
+  session: string;
+  plan: "anonymous";
+  /** Seconds until the session token must be refreshed. */
+  expires_in: number;
+}
+
+export interface SessionSnapshot {
+  plan: Plan;
+  /** Present once the user linked an X handle. */
+  handle?: string;
+  wallets_count?: number;
+  /** Today's lookup count; nulls mean server has no usage data yet. */
+  usage_today?: number;
+  /** null means unlimited (Pro / Partner). */
+  usage_limit?: number | null;
+}
+
+// --------------------------------------------------------------------------
+// Claim flow (identity graph A-tier)
+// --------------------------------------------------------------------------
+
+/** Request a nonce for signing. One nonce per (handle, address) pair. */
+export interface ClaimNonceRequest {
+  handle: string;
+  chain: Chain;
+  address: string;
+}
+
+export interface ClaimNonceResponse {
+  nonce: string;
+  /** ISO8601 timestamp issued by the server; must be echoed back in the signed message. */
+  issued_at: string;
+  /** Seconds until the nonce expires and needs to be requested again. */
+  expires_in: number;
+  /** Exact string the user must sign. Built by the server so client-side drift can't desynchronize the check. */
+  message: string;
+}
+
+/**
+ * Submit a signed canonical message. The server verifies signature,
+ * handle ownership (via the Twitter OAuth session attached to the JWT),
+ * and nonce validity. On success the link becomes A-tier.
+ */
+export interface ClaimSubmitRequest {
+  handle: string;
+  chain: Chain;
+  address: string;
+  nonce: string;
+  /** Exact message returned by /claim/nonce that the user signed. */
+  message: string;
+  /**
+   * Hex signature (0x-prefixed for EVM; base58 for Solana). The server
+   * decides how to verify based on `chain`.
+   */
+  signature: string;
+}
+
+export interface ClaimSubmitResponse {
+  ok: true;
+  tier: "A";
+  handle: string;
+  chain: Chain;
+  address: string;
+}
+
+// --------------------------------------------------------------------------
+// Canonical message format
+// --------------------------------------------------------------------------
+
+/**
+ * The exact string the user signs. Both the API and any client that builds
+ * the message MUST use this function to avoid "off-by-one" mismatches (a
+ * single extra space would invalidate the signature).
+ *
+ * Deliberately stable across scoring versions.
+ */
+export function buildClaimMessage(params: {
+  handle: string;
+  chain: Chain;
+  address: string;
+  nonce: string;
+  issuedAt: string; // ISO 8601
+}): string {
+  return (
+    `TruthLayer claim: I am @${params.handle} on platform x. ` +
+    `Address ${params.address}. ` +
+    `Chain ${params.chain}. ` +
+    `Nonce ${params.nonce}. ` +
+    `Issued at ${params.issuedAt}.`
+  );
+}
