@@ -4,13 +4,17 @@ import {
   type ScoreResponse,
 } from "@truthlayer/shared";
 
-// Three canonical fixtures that match the reference/mockup.html scenarios.
-// Real scoring pipeline will replace this module without changing the shape.
+// Mock fixtures for the three canonical scenarios. The real scoring pipeline
+// will replace this module without changing the response shape.
+//
+// The server pre-renders every display string so the client never applies
+// thresholds, formulas, or time-bucket logic locally. See scoring.md steering.
 
 const FIXTURES: Record<string, ScoreResponse> = {
   vitalik_research: {
     handle: "vitalik_research",
     identity_tier: "A",
+    identity_rank_label: null, // A-tier doesn't need a rank.
     wallets: [
       {
         chain: "ethereum",
@@ -21,30 +25,25 @@ const FIXTURES: Record<string, ScoreResponse> = {
     overlay_signal: "clean",
     metrics: {
       holds: {
-        status: "yes",
-        amount_usd: 9_500_000,
-        time_to_tweet_hours: 24 * 365 * 4,
         ui_flag: "green",
+        display: "Yes \u00B7 $9.5M",
+        display_sub: "long-term holder",
       },
       shill_history: {
-        calls_30d: 0,
-        unique_tickers_30d: 0,
-        serial_caller: false,
         ui_flag: "green",
+        display: "Not a shiller",
+        display_sub: "organic mentions only",
       },
       pnl: {
-        avg_pnl_7d: null,
-        median_pnl_7d: null,
-        calls_that_worked: 0,
-        total_calls: 0,
         ui_flag: "insufficient",
+        display: "insufficient data",
+        display_sub: "organic mentions only",
       },
     },
     token_signals: {
-      age_hours: 24 * 365 * 10,
-      top10_pct: 0.18,
-      lp_status: "locked",
-      mint_authority: null,
+      ui_flag: "green",
+      display: "Established token",
+      display_sub: "no risk flags",
     },
     explanation:
       "Long-term holder, no history of token shilling, wallet matches public identity via on-chain ENS.",
@@ -57,45 +56,39 @@ const FIXTURES: Record<string, ScoreResponse> = {
   alpha_caller_x: {
     handle: "alpha_caller_x",
     identity_tier: "B+",
-    identity_confidence: 0.72,
+    identity_rank_label: "top quintile, trader cohort",
     wallets: [
       {
         chain: "ethereum",
         address: "0x0000000000000000000000000000000000000000",
         tier: "B+",
-        confidence: 0.72,
       },
     ],
     overlay_signal: "caution",
     metrics: {
       holds: {
-        status: "yes",
-        amount_usd: 12_400,
-        time_to_tweet_hours: 6,
         ui_flag: "yellow",
+        display: "Yes \u00B7 $12.4K",
+        display_sub: "recent entry",
       },
       shill_history: {
-        calls_30d: 14,
-        unique_tickers_30d: 11,
-        serial_caller: true,
         ui_flag: "yellow",
+        display: "Frequent caller",
+        display_sub: "serial pattern detected",
       },
       pnl: {
-        avg_pnl_7d: -0.38,
-        median_pnl_7d: -0.52,
-        calls_that_worked: 3,
-        total_calls: 14,
         ui_flag: "red",
+        display: "Underperforms",
+        display_sub: "most recent calls below market",
       },
     },
     token_signals: {
-      age_hours: 72,
-      top10_pct: 0.31,
-      lp_status: "locked",
-      mint_authority: null,
+      ui_flag: "neutral",
+      display: "Established token",
+      display_sub: "no immediate risk flags",
     },
     explanation:
-      "Author entered the position hours before promoting it, and historical calls underperform the market. Looks like a typical short-term pump setup.",
+      "Author entered the position shortly before promoting it, and historical calls have tended to underperform. Treat as a short-term signal.",
     sources: ["etherscan", "dex_trades", "tl_kol_graph"],
     computed_at: new Date().toISOString(),
     insufficient_data_fields: [],
@@ -105,6 +98,7 @@ const FIXTURES: Record<string, ScoreResponse> = {
   moondegen_sol: {
     handle: "moondegen_sol",
     identity_tier: "B",
+    identity_rank_label: null,
     wallets: [
       {
         chain: "solana",
@@ -115,33 +109,28 @@ const FIXTURES: Record<string, ScoreResponse> = {
     overlay_signal: "risk",
     metrics: {
       holds: {
-        status: "yes",
-        amount_usd: 2_100,
-        time_to_tweet_hours: 0.2,
         ui_flag: "red",
+        display: "Yes \u00B7 $2.1K",
+        display_sub: "front-run pattern",
       },
       shill_history: {
-        calls_30d: 28,
-        unique_tickers_30d: 26,
-        serial_caller: true,
         ui_flag: "yellow",
+        display: "Frequent caller",
+        display_sub: "serial pattern detected",
       },
       pnl: {
-        avg_pnl_7d: -0.71,
-        median_pnl_7d: -0.88,
-        calls_that_worked: 2,
-        total_calls: 28,
         ui_flag: "red",
+        display: "Severely underperforms",
+        display_sub: "nearly all calls lost value",
       },
     },
     token_signals: {
-      age_hours: 0.37,
-      top10_pct: 0.74,
-      lp_status: "unlocked",
-      mint_authority: "retained",
+      ui_flag: "red",
+      display: "High-risk token",
+      display_sub: "new launch, concentrated supply",
     },
     explanation:
-      "The promoter's wallet is connected to three previous rug-pulls in the last 30 days, and the token was launched as a sniper bundle with concentrated supply.",
+      "The promoter's wallet is connected to previous rug-pulls, and the token was launched as a sniper bundle with concentrated supply.",
     sources: ["helius", "rugcheck", "tl_kol_graph"],
     computed_at: new Date().toISOString(),
     insufficient_data_fields: [],
@@ -154,34 +143,23 @@ export function getMockScore(req: ScoreRequest): ScoreResponse {
   const fixture = FIXTURES[key];
   if (fixture) return fixture;
 
-  // Default: unknown handle -> clean signal with C tier (no data to judge).
+  // Default: unknown handle -> unknown signal (C tier, no data to judge).
+  const insufficient = {
+    ui_flag: "insufficient" as const,
+    display: "insufficient data",
+  };
   return {
     handle: req.handle,
     identity_tier: "C",
+    identity_rank_label: null,
     wallets: [],
     overlay_signal: "unknown",
     metrics: {
-      holds: { status: "insufficient", ui_flag: "insufficient" },
-      shill_history: {
-        calls_30d: 0,
-        unique_tickers_30d: 0,
-        serial_caller: false,
-        ui_flag: "insufficient",
-      },
-      pnl: {
-        avg_pnl_7d: null,
-        median_pnl_7d: null,
-        calls_that_worked: 0,
-        total_calls: 0,
-        ui_flag: "insufficient",
-      },
+      holds: insufficient,
+      shill_history: insufficient,
+      pnl: insufficient,
     },
-    token_signals: {
-      age_hours: 0,
-      top10_pct: null,
-      lp_status: "unknown",
-      mint_authority: null,
-    },
+    token_signals: insufficient,
     explanation: "No verified wallet for this author. Claim to get a badge.",
     sources: [],
     computed_at: new Date().toISOString(),
