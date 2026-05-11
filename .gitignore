@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+
+# Internal specifications — contain thresholds, weights, heuristics, and
+# anti-abuse thresholds that must not be public to prevent reverse-engineering
+# by bad actors. Team access is managed outside of git.
+.kiro/internal/
