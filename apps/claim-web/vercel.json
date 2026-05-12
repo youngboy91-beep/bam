@@ -1,0 +1,6 @@
+{
+  "framework": "vite",
+  "buildCommand": "cd ../.. && npm install && npm run build --workspace packages/shared && npm run build --workspace apps/claim-web",
+  "outputDirectory": "dist",
+  "installCommand": "echo skip"
+}
