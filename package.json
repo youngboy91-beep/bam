@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace packages/shared && npm run build --workspaces --if-present --include-workspace-root=false",
+    "build": "npm run build --workspaces --if-present",
     "dev:extension": "npm run dev --workspace apps/extension",
     "dev:api": "npm run dev --workspace apps/api",
     "dev:claim-web": "npm run dev --workspace apps/claim-web",
