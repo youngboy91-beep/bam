@@ -1,0 +1,33 @@
+TruthLayer Source-Available License v1.0
+
+Copyright (c) 2025-present TruthLayer authors.
+
+Permission is hereby granted to any person obtaining a copy of this
+software and associated documentation files (the "Software") to:
+
+  1. View and read the source code.
+  2. Run the Software locally for personal, non-commercial use.
+  3. Fork and modify the Software for personal experimentation.
+  4. Submit pull requests, issues, and contributions back to the
+     original repository.
+
+The following are explicitly NOT granted:
+
+  A. Commercial redistribution of the Software, in source or binary
+     form, in whole or in part.
+  B. Operation of a public-facing service substantially based on the
+     Software ("a competing product"), except by the original
+     copyright holder.
+  C. Use of the "TruthLayer" name, logo, or trademarks except to
+     reference the original project.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For commercial inquiries, partnership, or licensing exemptions:
+open an issue on the GitHub repository tagged with `licensing`.
