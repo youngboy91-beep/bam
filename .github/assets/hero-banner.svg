@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0b0d"/>
+      <stop offset="1" stop-color="#16181c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7856ff" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#7856ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1d9bf0"/>
+      <stop offset="1" stop-color="#7856ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <ellipse cx="600" cy="0" rx="600" ry="240" fill="url(#glow)"/>
+
+  <rect x="80" y="60" width="36" height="36" rx="8" fill="url(#accent)"/>
+  <text x="130" y="86" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#e7e9ea">TruthLayer</text>
+
+  <text x="80" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" fill="#e7e9ea" letter-spacing="-2">On-chain truth.</text>
+  <text x="80" y="248" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" letter-spacing="-2" fill="url(#accent)">For every tweet.</text>
+
+  <text x="80" y="296" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#71767b">A Chrome extension that shows who really holds what they shill.</text>
+
+  <g transform="translate(80, 340)">
+    <circle cx="8" cy="8" r="6" fill="#00ba7c"/>
+    <text x="22" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#71767b">verified</text>
+    <circle cx="135" cy="8" r="6" fill="#ffad1f"/>
+    <text x="149" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#71767b">caution</text>
+    <circle cx="240" cy="8" r="6" fill="#f4212e"/>
+    <text x="254" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#71767b">high risk</text>
+    <circle cx="350" cy="8" r="6" fill="#71767b"/>
+    <text x="364" y="13" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#71767b">unverified</text>
+  </g>
+
+  <g transform="translate(740, 90)">
+    <rect width="380" height="220" rx="16" fill="#16181c" stroke="#2f3336" stroke-width="1"/>
+    <circle cx="40" cy="46" r="20" fill="url(#accent)"/>
+    <text x="40" y="52" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#fff">A</text>
+    <text x="72" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700" fill="#e7e9ea">AlphaCaller</text>
+    <circle cx="158" cy="38" r="4.5" fill="#ffad1f"/>
+    <text x="170" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#71767b">@alpha_caller_x</text>
+    <text x="72" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#71767b">42m</text>
+    <text x="20" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#e7e9ea">I'm loading <tspan fill="#1d9bf0">$PEPU</tspan> heavy right now.</text>
+    <text x="20" y="124" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#e7e9ea">10x this week, trust me.</text>
+    <rect x="20" y="150" width="120" height="24" rx="12" fill="#ffad1f" fill-opacity="0.15" stroke="#ffad1f" stroke-opacity="0.4"/>
+    <circle cx="34" cy="162" r="3" fill="#ffad1f"/>
+    <text x="46" y="166" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" fill="#ffad1f" letter-spacing="0.4">CAUTION</text>
+    <text x="20" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#71767b">Entered 6h before tweet · 14 calls / 30d</text>
+    <text x="20" y="207" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#71767b">Avg 7d PnL after call: <tspan fill="#f4212e" font-weight="600">-38%</tspan></text>
+  </g>
+</svg>
