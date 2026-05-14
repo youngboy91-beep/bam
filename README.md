@@ -13,7 +13,7 @@ A Chrome extension that injects on-chain reality checks next to every tweet on X
 
 <br />
 
-[![Stars](https://img.shields.io/github/stars/youngboy91-beep/bam?style=for-the-badge&logo=github&color=FFB000&labelColor=0d1117)](https://github.com/youngboy91-beep/bam/stargazers)
+[![Stars](https://img.shields.io/github/stars/miraekims/Truthlayer?style=for-the-badge&logo=github&color=FFB000&labelColor=0d1117)](https://github.com/miraekims/Truthlayer/stargazers)
 [![License](https://img.shields.io/badge/license-Proprietary-7856FF?style=for-the-badge&labelColor=0d1117)](#license)
 [![Chrome](https://img.shields.io/badge/Chrome-MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=0d1117)](https://chrome.google.com/webstore)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white&labelColor=0d1117)](https://www.typescriptlang.org)
@@ -23,7 +23,7 @@ A Chrome extension that injects on-chain reality checks next to every tweet on X
 <a href="#-how-it-works">How it works</a> · 
 <a href="#-deploy-in-15-minutes-0mo">Deploy</a> · 
 <a href="#-faq">FAQ</a> · 
-<a href="https://github.com/youngboy91-beep/bam/issues/new">Report bug</a>
+<a href="https://github.com/miraekims/Truthlayer/issues/new">Report bug</a>
 
 <br />
 
@@ -146,8 +146,8 @@ The hover card shows:
 ## 🚀 Quick start
 
 ```bash
-git clone https://github.com/youngboy91-beep/bam.git
-cd bam
+git clone https://github.com/miraekims/Truthlayer.git
+cd Truthlayer
 npm install
 npm run dev:all
 ```
@@ -179,8 +179,8 @@ Real EVM keypair → SIWE signature → API verify → A-tier recorded → repla
 ## 🌐 Deploy in 15 minutes ($0/mo)
 
 <p align="center">
-<a href="https://railway.app/new/template?repo=https://github.com/youngboy91-beep/bam"><img src="https://railway.app/button.svg" alt="Deploy on Railway" /></a>&nbsp;
-<a href="https://vercel.com/new/clone?repository-url=https://github.com/youngboy91-beep/bam&root-directory=apps/claim-web&env=TL_API_BASE&envDescription=Your%20Railway%20API%20URL"><img src="https://vercel.com/button" alt="Deploy to Vercel" /></a>
+<a href="https://railway.app/new/template?repo=https://github.com/miraekims/Truthlayer"><img src="https://railway.app/button.svg" alt="Deploy on Railway" /></a>&nbsp;
+<a href="https://vercel.com/new/clone?repository-url=https://github.com/miraekims/Truthlayer&root-directory=apps/claim-web&env=TL_API_BASE&envDescription=Your%20Railway%20API%20URL"><img src="https://vercel.com/button" alt="Deploy to Vercel" /></a>
 </p>
 
 | Step | Service | What you get | Cost |
@@ -197,11 +197,11 @@ Detailed walkthrough: **[DEPLOY.md](./DEPLOY.md)**
 ### Or pull pre-built image
 
 ```bash
-docker pull ghcr.io/youngboy91-beep/bam/api:latest
+docker pull ghcr.io/miraekims/Truthlayer/api:latest
 docker run -p 8787:8787 \
   -e DATABASE_URL=postgres://... \
   -e TL_JWT_SECRET=$(openssl rand -hex 32) \
-  ghcr.io/youngboy91-beep/bam/api:latest
+  ghcr.io/miraekims/Truthlayer/api:latest
 ```
 
 ---
@@ -221,7 +221,7 @@ docker run -p 8787:8787 \
 ## 📁 Project structure
 
 ```
-bam/
+Truthlayer/
 ├── apps/
 │   ├── api/              ← Fastify API: auth, scoring, identity graph
 │   ├── extension/        ← Chrome MV3: dot overlay + hover card + popup
@@ -323,7 +323,7 @@ Before contributing:
 
 ## ⭐ Star history
 
-[![Star History Chart](https://api.star-history.com/svg?repos=youngboy91-beep/bam&type=Date)](https://star-history.com/#youngboy91-beep/bam&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=miraekims/Truthlayer&type=Date)](https://star-history.com/#miraekims/Truthlayer&Date)
 
 ## 📜 License
 

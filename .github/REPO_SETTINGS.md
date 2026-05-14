@@ -70,7 +70,7 @@ convert -density 200 .github/assets/og-image.svg og-image.png
 
 ## 5. Pin лучшие репозитории на свой профиль
 
-Зайди на свой GitHub-профиль (`/youngboy91-beep`) → **Customize your pins** → закрепи `bam` сверху. Без этого его не увидят те, кто пришёл на твой профиль.
+Зайди на свой GitHub-профиль (`/miraekims`) → **Customize your pins** → закрепи `Truthlayer` сверху. Без этого его не увидят те, кто пришёл на твой профиль.
 
 ## 6. Сделай Release v0.1.0
 
