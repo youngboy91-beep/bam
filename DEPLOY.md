@@ -38,7 +38,7 @@ All services below have free tiers that comfortably handle 1000+ MAU.
 
 1. Go to **[railway.app](https://railway.app)** → Sign up with GitHub
 2. Click **"New Project"** → **"Deploy from GitHub Repo"**
-3. Select `youngboy91-beep/bam`
+3. Select `miraekims/Truthlayer`
 4. Railway auto-detects the Dockerfile. If it doesn't, go to Settings:
    - **Dockerfile Path:** `apps/api/Dockerfile`
 5. Go to **Variables** tab and add:
@@ -66,7 +66,7 @@ All services below have free tiers that comfortably handle 1000+ MAU.
 > Vercel deploys Vite apps from GitHub with automatic HTTPS and CDN.
 
 1. Go to **[vercel.com](https://vercel.com)** → Sign up with GitHub
-2. Click **"Add New → Project"** → Import `youngboy91-beep/bam`
+2. Click **"Add New → Project"** → Import `miraekims/Truthlayer`
 3. Configure:
    - **Framework Preset:** Vite
    - **Root Directory:** `apps/claim-web`
@@ -77,7 +77,7 @@ All services below have free tiers that comfortably handle 1000+ MAU.
    | `TL_API_BASE` | `https://YOUR-RAILWAY-DOMAIN` (from Step 2) |
 
 5. Click **Deploy**
-6. Vercel gives you a URL like `bam-claim-web.vercel.app`
+6. Vercel gives you a URL like `truthlayer-claim.vercel.app`
 7. (Optional) Add custom domain `truthlayer.app` in Vercel Settings → Domains
 
 > **Important:** Go back to Railway and update `TL_CORS_ORIGINS` to include your Vercel URL.
@@ -88,7 +88,7 @@ All services below have free tiers that comfortably handle 1000+ MAU.
 
 ### Build the production package
 
-On your Mac, in the `bam` folder:
+On your Mac, in the `Truthlayer` folder:
 
 ```bash
 # Install deps if not already

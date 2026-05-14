@@ -11,8 +11,8 @@ Thanks for considering a contribution. Read this first — it'll save you a roun
 
 ```bash
 # 1. Fork + clone
-git clone https://github.com/YOUR-USERNAME/bam.git
-cd bam
+git clone https://github.com/YOUR-USERNAME/Truthlayer.git
+cd Truthlayer
 
 # 2. Branch
 git checkout -b feat/your-thing
@@ -68,4 +68,4 @@ Smoke tests are the floor, not the ceiling. If you add new behaviour, add a smok
 
 ## Questions?
 
-Open a [GitHub Discussion](https://github.com/youngboy91-beep/bam/discussions) or comment on an existing issue.
+Open a [GitHub Discussion](https://github.com/miraekims/Truthlayer/discussions) or comment on an existing issue.
