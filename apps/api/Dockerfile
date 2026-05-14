@@ -1,18 +1,19 @@
 FROM node:20-slim AS builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
 COPY apps/api/package.json apps/api/
 RUN npm ci --workspace apps/api --workspace packages/shared
 COPY packages/shared/ packages/shared/
 COPY apps/api/ apps/api/
-RUN npm run build --workspace apps/api
+RUN npm run build --workspace packages/shared && npm run build --workspace apps/api
 
 FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/package.json /app/package-lock.json ./
-COPY --from=builder /app/packages/shared/ packages/shared/
+COPY --from=builder /app/packages/shared/package.json packages/shared/
+COPY --from=builder /app/packages/shared/dist/ packages/shared/dist/
 COPY --from=builder /app/apps/api/package.json apps/api/
 RUN npm ci --workspace apps/api --workspace packages/shared --omit=dev
 COPY --from=builder /app/apps/api/dist/ apps/api/dist/
